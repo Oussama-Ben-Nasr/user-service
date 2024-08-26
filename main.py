@@ -8,8 +8,7 @@ from sqlalchemy import String
 from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-
-
+from pydantic import BaseModel
 
 class Base(DeclarativeBase):
     pass
@@ -23,44 +22,43 @@ class User(Base):
     user_name: Mapped[str] = mapped_column(String(30))
     password: Mapped[str] = mapped_column(String)
     age: Mapped[Optional[int]]
-    
-    def __repr__(self) -> str:
-        return "User(id={self.user_id!r}, name={self.user_name!r})"
+
+class UserCreds(BaseModel):
+    user_name: str
+    password: str
 
 Base.metadata.create_all(engine)
 app = FastAPI()
 
 @app.post("/register")
-def register(user_name: str, password: str):
+def register(creds: UserCreds):
     user = User(
         user_id = str(uuid.uuid4()),
         email = "",
-        user_name = user_name,
-        password  = password,
+        user_name = creds.user_name,
+        password  = creds.password,
         age=-1
     )
 
     with Session(engine) as session:
         # make sure username does not exist
-        stmt = select(User).where(User.user_name == user_name)
-        for u in session.scalars(stmt):
-            print(u)
+        stmt = select(User).where(User.user_name == creds.user_name)
+        for user in session.scalars(stmt):
             return {"User exist please choose another username"}
 
         # add user
         session.add(user)
         session.commit()
 
-    return {"user_name": user_name}
-
+    return {"user_name": creds.user_name}
 
 @app.post("/login")
-def register(user_name: str, password: str):
+def register(creds: UserCreds):
     with Session(engine) as session:
-        stmt = select(User).where(User.user_name == user_name)
-        for u in session.scalars(stmt):
-            if(u.password != password):
+        stmt = select(User).where(User.user_name == creds.user_name)
+        for matching_user in session.scalars(stmt):
+            if (matching_user.password != creds.password):
                 return {"Wrong password!"}
-            return {"user_name": u.user_name}
+            return {"user_name": matching_user.user_name}
         return {"User not found!"}
 
