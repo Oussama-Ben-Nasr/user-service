@@ -1,9 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-# import sys
-# sys.path.append("..")
-from user.models import UserLoginRequest, UserRegisterRequest, FailedRequest, UserRegisterResponse
-from user import UserService, User
+from ..user.models import UserLoginRequest, UserRegisterRequest, FailedRequest, UserRegisterResponse
+from ..user import UserService, User
 
 app = UserService()
 
