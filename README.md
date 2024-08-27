@@ -5,17 +5,23 @@ using fast-api and sqlalchemy as an ORM.
 # routes
 1. login
     An enpoint taking the login information
+
         + username
         + password
+
     returns
+
         -> valid registred user
         -> invalid creds
 
 2. register
     An enpoint taking the login information
+
         + username
         + password
+
     returns
+
         -> registers a user with the given creds.
 
 # commands to set up the dev environment.
