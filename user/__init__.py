@@ -16,10 +16,11 @@ class User(Base):
 
 
 class UserService(FastAPI):
-    def __init__(self):
+    def __init__(self, db_url="sqlite:///example.db"):
         # initialize the db connection
-        engine = create_engine("sqlite:///example.db", echo=True)
-        self.db = engine
+        engine = create_engine(db_url, echo=True)
+        self.db_connection = engine
+        self.db_url = db_url
         Base.metadata.create_all(engine)
         super().__init__()
     

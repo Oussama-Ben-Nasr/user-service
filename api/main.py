@@ -1,6 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from user.models import UserLoginRequest, UserRegisterRequest
+# import sys
+# sys.path.append("..")
+from user.models import UserLoginRequest, UserRegisterRequest, FailedRequest, UserRegisterResponse
 from user import UserService, User
 
 app = UserService()
@@ -14,11 +16,11 @@ def register(request: UserRegisterRequest):
         password  = request.password,
     )
 
-    with Session(app.db) as session:
+    with Session(app.db_connection) as session:
         # make sure username does not exist
         stmt = select(User).where(User.user_name == request.user_name)
         for user in session.scalars(stmt):
-            return {"User exist please choose another username"}
+            return {"message": "User exist please choose another username"}
 
         # add user
         session.add(user)
@@ -26,13 +28,14 @@ def register(request: UserRegisterRequest):
 
     return {"user_name": request.user_name}
 
-@app.post("/login")
+
+@app.post("/login", response_model=UserRegisterResponse | FailedRequest)
 def register(request: UserLoginRequest):
-    with Session(app.db) as session:
+    with Session(app.db_connection) as session:
         stmt = select(User).where(User.user_name == request.user_name)
         for matching_user in session.scalars(stmt):
             if (matching_user.password != request.password):
-                return {"Wrong password!"}
+                return {"message": "Wrong password!"}
             return {"user_name": matching_user.user_name}
-        return {"User not found!"}
+        return {"message": "User not found!"}
 
