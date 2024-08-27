@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
-from api.main import app
-from user.models import UserRegisterRequest, UserRegisterResponse, FailedRequest, UserLoginResponse, UserLoginRequest
+from codimens.api.main import app
+from codimens.user.models import UserRegisterRequest, UserRegisterResponse, FailedRequest, UserLoginResponse, UserLoginRequest
 
 client = TestClient(app)
 

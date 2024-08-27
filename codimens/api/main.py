@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from ..user.models import UserLoginRequest, UserRegisterRequest, FailedRequest, UserRegisterResponse
-from ..user import UserService, User
+from codimens.user.models import UserLoginRequest, UserRegisterRequest, FailedRequest, UserRegisterResponse
+from codimens.user import UserService, User
 
 app = UserService()
 
